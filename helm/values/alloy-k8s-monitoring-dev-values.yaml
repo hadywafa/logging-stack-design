@@ -39,7 +39,9 @@ podLogs:
     - default
     - logging
 
-# Collectors
+# =====================
+# Alloy Configuration
+# =====================
 alloy-singleton:
   enabled: false
 
