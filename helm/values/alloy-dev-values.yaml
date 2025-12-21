@@ -10,16 +10,41 @@ resources:
     memory: 256Mi
 
 config:
-  logs:
-    configs:
-      - name: kubernetes-logs
-        clients:
-          - url: http://loki-gateway.logging.svc.cluster.local/loki/api/v1/push
+  content: |
+    logging {
+      level = "info"
+    }
 
-        scrape_configs:
-          - job_name: kubernetes-pods
-            pipeline_stages:
-              - docker: {}
+    discovery.kubernetes "pods" {
+      role = "pod"
+    }
 
-            kubernetes_sd_configs:
-              - role: pod
+    discovery.relabel "pods" {
+      targets = discovery.kubernetes.pods.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "kubernetes_namespace_name"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_container_name"]
+        target_label  = "container"
+      }
+    }
+
+    loki.source.kubernetes "pods" {
+      targets    = discovery.relabel.pods.output
+      forward_to = [loki.write.default.receiver]
+    }
+
+    loki.write "default" {
+      endpoint {
+        url = "http://loki-gateway.logging.svc.cluster.local"
+      }
+    }

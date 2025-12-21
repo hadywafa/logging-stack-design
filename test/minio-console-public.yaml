@@ -5,8 +5,11 @@ metadata:
   namespace: logging
 spec:
   type: LoadBalancer
+  externalTrafficPolicy: Local
   ports:
-    - port: 9001
+    - name: console
+      port: 9001
       targetPort: 9001
   selector:
-    app.kubernetes.io/name: minio
+    app: minio
+    release: minio
