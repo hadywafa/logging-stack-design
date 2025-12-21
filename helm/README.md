@@ -107,3 +107,11 @@ helm upgrade --install logging ./logging-stack \
   -n logging \
   -f prod.yaml
 ```
+
+## Testing
+
+### Test Alloy
+
+### Test Loki
+
+### Test MinIO
