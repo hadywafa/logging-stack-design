@@ -3,16 +3,8 @@ deploymentMode: SimpleScalable
 loki:
   auth_enabled: false
 
-  # Required by v6+ chart validation: schemaConfig must exist
-  schemaConfig:
-    configs:
-      - from: "2024-04-01"
-        store: tsdb
-        object_store: s3
-        schema: v13
-        index:
-          prefix: loki_index_
-          period: 24h
+  commonConfig:
+    replication_factor: 1
 
   memberlist:
     join_members:
@@ -24,6 +16,27 @@ loki:
         kvstore:
           store: memberlist
 
+  distributor:
+    ring:
+      kvstore:
+        store: memberlist
+
+  index_gateway:
+    ring:
+      kvstore:
+        store: memberlist
+
+  # Required by v6+ chart validation: schemaConfig must exist
+  schemaConfig:
+    configs:
+      - from: "2024-04-01"
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+
   # Recommended knobs from official install docs (safe for dev)
   pattern_ingester:
     enabled: true
@@ -31,9 +44,6 @@ loki:
   limits_config:
     allow_structured_metadata: true
     volume_enabled: true
-
-  querier:
-    max_concurrent: 2
 
   # IMPORTANT: This section is what the Helm chart renders into Loki config
   storage:
@@ -56,6 +66,8 @@ loki:
       accessKeyId: minioadmin
       secretAccessKey: minioadmin123
 
+# ====================================================
+
 # Dev sizing
 write:
   replicas: 1
@@ -74,3 +86,13 @@ resultsCache:
 gateway:
   service:
     type: ClusterIP
+
+indexGateway:
+  enabled: true
+
+compactor:
+  enabled: true
+
+service:
+  memberlist:
+    enabled: true

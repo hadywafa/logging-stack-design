@@ -1,50 +1,87 @@
 controller:
   type: daemonset
 
-resources:
-  requests:
-    cpu: 50m
-    memory: 128Mi
-  limits:
-    cpu: 200m
-    memory: 256Mi
+  volumes:
+    alloy:
+      - name: cri
+        hostPath:
+          path: /run/containerd/containerd.sock
+      - name: journal
+        hostPath:
+          path: /var/log/journal
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlogpods
+        hostPath:
+          path: /var/log/pods
+      - name: varlogcontainers
+        hostPath:
+          path: /var/log/containers
+      - name: varlibcontainerd
+        hostPath:
+          path: /var/lib/containerd
+
+    configReloader:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlogpods
+        hostPath:
+          path: /var/log/pods
+      - name: varlogcontainers
+        hostPath:
+          path: /var/log/containers
+      - name: varlibcontainerd
+        hostPath:
+          path: /var/lib/containerd
+
+  volumeMounts:
+    alloy:
+      - name: cri
+        mountPath: /run/containerd/containerd.sock
+        readOnly: true
+      - name: journal
+        mountPath: /var/log/journal
+        readOnly: true
+      - name: varlog
+        mountPath: /var/log
+      - name: varlogpods
+        mountPath: /var/log/pods
+        readOnly: true
+      - name: varlogcontainers
+        mountPath: /var/log/containers
+        readOnly: true
+      - name: varlibcontainerd
+        mountPath: /var/lib/containerd
+        readOnly: true
+
+    configReloader:
+      - name: varlog
+        mountPath: /var/log
+      - name: varlogpods
+        mountPath: /var/log/pods
+        readOnly: true
+      - name: varlogcontainers
+        mountPath: /var/log/containers
+        readOnly: true
+      - name: varlibcontainerd
+        mountPath: /var/lib/containerd
+        readOnly: true
 
 config:
   content: |
     logging {
       level = "info"
-    }
-
-    discovery.kubernetes "pods" {
-      role = "pod"
-    }
-
-    discovery.relabel "pods" {
-      targets = discovery.kubernetes.pods.targets
-
-      rule {
-        source_labels = ["__meta_kubernetes_namespace"]
-        target_label  = "kubernetes_namespace_name"
-      }
-
-      rule {
-        source_labels = ["__meta_kubernetes_pod_name"]
-        target_label  = "pod"
-      }
-
-      rule {
-        source_labels = ["__meta_kubernetes_container_name"]
-        target_label  = "container"
-      }
+      format = "logfmt"
     }
 
     loki.source.kubernetes "pods" {
-      targets    = discovery.relabel.pods.output
       forward_to = [loki.write.default.receiver]
     }
 
     loki.write "default" {
       endpoint {
-        url = "http://loki-gateway.logging.svc.cluster.local"
+        url = "http://loki-gateway.logging.svc.cluster.local/loki/api/v1/push"
       }
     }
