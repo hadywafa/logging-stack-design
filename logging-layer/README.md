@@ -3,6 +3,8 @@
 > Each **application AKS cluster** runs its own **Loki + Alloy**.  
 > All clusters write to a **shared MinIO S3 platform** using **bucket isolation**.
 
+![1766265430226](image/README/1766265430226.png)
+
 ![Image](https://grafana.com/media/docs/loki/get-started-flog-v3.png)
 
 ---

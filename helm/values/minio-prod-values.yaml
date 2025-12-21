@@ -1,0 +1,31 @@
+mode: distributed
+
+replicas: 4
+
+rootUser: minioadmin
+rootPassword: minioadmin-password-change-me
+
+persistence:
+  enabled: true
+  size: 500Gi
+  storageClass: managed-premium
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "2"
+    memory: "4Gi"
+
+securityContext:
+  enabled: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+service:
+  type: ClusterIP
+
+consoleService:
+  type: ClusterIP

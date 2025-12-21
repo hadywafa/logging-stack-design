@@ -1,0 +1,80 @@
+#########################################################
+# MinIO (official chart)
+#########################################################
+minio:
+  mode: distributed
+
+  replicas: 4
+
+  persistence:
+    enabled: true
+    size: 100Gi
+    storageClass: managed-premium
+
+  service:
+    type: ClusterIP
+
+  consoleService:
+    type: ClusterIP
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 2Gi
+
+  securityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+#########################################################
+# Loki (official Grafana chart)
+#########################################################
+loki:
+  deploymentMode: SimpleScalable
+
+  loki:
+    auth_enabled: false
+
+    storage:
+      type: s3
+      s3:
+        endpoint: http://minio.logging.svc.cluster.local:9000
+        s3ForcePathStyle: true
+        region: us-east-1
+
+        bucketNames:
+          chunks: logs-default
+          ruler: logs-default
+          admin: logs-default
+
+  write:
+    replicas: 2
+  read:
+    replicas: 2
+  backend:
+    replicas: 2
+
+#########################################################
+# Alloy (official Grafana chart)
+#########################################################
+alloy:
+  controller:
+    type: daemonset
+
+  config:
+    logs:
+      configs:
+        - name: kubernetes-logs
+          clients:
+            - url: http://loki-gateway.logging.svc.cluster.local/loki/api/v1/push
+          scrape_configs:
+            - job_name: kubernetes-pods
+              pipeline_stages:
+                - docker: {}
+              kubernetes_sd_configs:
+                - role: pod

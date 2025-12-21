@@ -1,0 +1,31 @@
+deploymentMode: SimpleScalable
+
+loki:
+  auth_enabled: false
+
+  storage:
+    type: s3
+    s3:
+      endpoint: http://minio.logging.svc.cluster.local:9000
+      s3ForcePathStyle: true
+      region: us-east-1
+
+      bucketNames:
+        chunks: logs-prod
+        ruler: logs-prod
+        admin: logs-prod
+
+  extraEnv:
+    - name: AWS_ACCESS_KEY_ID
+      value: minioadmin
+    - name: AWS_SECRET_ACCESS_KEY
+      value: minioadmin-password-change-me
+
+write:
+  replicas: 3
+
+read:
+  replicas: 3
+
+backend:
+  replicas: 3

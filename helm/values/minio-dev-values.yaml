@@ -1,0 +1,31 @@
+mode: standalone
+
+replicas: 1
+
+rootUser: minioadmin
+rootPassword: minioadmin123
+
+persistence:
+  enabled: true
+  size: 20Gi
+  storageClass: managed-premium
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+service:
+  type: ClusterIP
+
+consoleService:
+  type: ClusterIP
+
+securityContext:
+  enabled: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
