@@ -2,18 +2,19 @@ deploymentMode: SimpleScalable
 
 loki:
   auth_enabled: false
-
+  useTestSchema: true
   storage:
     type: s3
+
+    bucketNames:
+      chunks: logs-dev
+      ruler: logs-dev
+      admin: logs-dev
+
     s3:
       endpoint: http://minio.logging.svc.cluster.local:9000
       s3ForcePathStyle: true
       region: us-east-1
-
-      bucketNames:
-        chunks: logs-dev
-        ruler: logs-dev
-        admin: logs-dev
 
   extraEnv:
     - name: AWS_ACCESS_KEY_ID
@@ -29,11 +30,3 @@ read:
 
 backend:
   replicas: 1
-
-resources:
-  requests:
-    cpu: 100m
-    memory: 256Mi
-  limits:
-    cpu: 500m
-    memory: 512Mi

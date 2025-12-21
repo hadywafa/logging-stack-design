@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-console-internal
+  namespace: logging
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 9001
+      targetPort: 9001
+  selector:
+    app.kubernetes.io/name: minio

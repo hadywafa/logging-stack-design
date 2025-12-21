@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-generator
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-generator
+  template:
+    metadata:
+      labels:
+        app: log-generator
+    spec:
+      containers:
+        - name: app
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo "level=INFO service=log-generator msg=\"hello from app\""
+                echo "level=ERROR service=log-generator msg=\"something failed\""
+                sleep 5
+              done
