@@ -62,7 +62,7 @@ loki:
       s3ForcePathStyle: true
       insecure: true
 
-      # CRITICAL: provide credentials HERE so Loki never tries IMDS
+      # CRITICAL: I need to change it to use secret store csi driver
       accessKeyId: minioadmin
       secretAccessKey: minioadmin123
 

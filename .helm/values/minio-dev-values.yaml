@@ -7,7 +7,7 @@ rootPassword: minioadmin123
 
 persistence:
   enabled: true
-  size: 20Gi
+  size: 100Gi
   storageClass: managed-premium
 
 resources:
@@ -18,14 +18,14 @@ resources:
     cpu: 500m
     memory: 512Mi
 
-service:
-  type: ClusterIP
-
-consoleService:
-  type: ClusterIP
-
 securityContext:
   enabled: true
   runAsUser: 1000
   runAsGroup: 1000
   fsGroup: 1000
+
+service:
+  type: ClusterIP
+
+consoleService:
+  type: ClusterIP

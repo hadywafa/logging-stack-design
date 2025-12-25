@@ -28,7 +28,12 @@ Verify MinIO → create bucket.
 kubectl port-forward svc/minio-console 9001 -n logging
 ```
 
-create logs-dev
+create logs-dev using cli
+
+```bash
+mc alias set minio http://minio.logging.svc.cluster.local:9000 minioadmin minioadmin123
+mc mb minio/logs-preprod
+```
 
 ---
 
@@ -55,9 +60,13 @@ kubectl logs deploy/loki-write -n logging
 ### Step 3 — Alloy
 
 ```bash
-helm upgrade --install alloy grafana/alloy \
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+
+helm install k8s-monitoring grafana/k8s-monitoring \
   -n logging \
-  -f alloy-dev-values.yaml
+  --create-namespace \
+  -f alloy-k8s-monitoring-dev-values.yaml
 ```
 
 Verify Alloy writes to Loki.

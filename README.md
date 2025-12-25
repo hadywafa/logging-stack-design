@@ -171,3 +171,5 @@ i explained implementation each layer in separate documents.
 - [Medium - How to install MinIO in Kubernetes in 15 min.](https://dev.to/giveitatry/how-to-install-minio-in-kubernetes-in-15-min-47h9)
 
 and For sure I used LLM Models like ChatGPT for documentation and searching.
+
+![1766582271079](image/README/1766582271079.png)
